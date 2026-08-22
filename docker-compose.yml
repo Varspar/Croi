@@ -1,0 +1,105 @@
+services:
+  # PostgreSQL + pgvector
+  croi-db:
+    image: pgvector/pgvector:pg15
+    container_name: croi-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-croi}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-croi}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - croi-network
+
+  # Ollama embeddings service (nomic-embed-text). Pull the model once after
+  # first startup: docker exec croi-ollama ollama pull nomic-embed-text
+  ollama:
+    image: ollama/ollama:latest
+    container_name: croi-ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    networks:
+      - croi-network
+
+  # Spring Boot backend
+  croi-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: croi-backend
+    environment:
+      DB_URL: jdbc:postgresql://croi-db:5432/${DB_NAME:-croi}
+      DB_USERNAME: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-anthropic/claude-3-haiku}
+      OLLAMA_API_URL: http://ollama:11434/api/embeddings
+      JWT_SECRET: ${JWT_SECRET:-change-this-super-secret-key-min-32-characters-long}
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      croi-db:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/v3/api-docs || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    networks:
+      - croi-network
+    # Flyway runs migrations automatically on startup.
+    # Logs: docker-compose logs -f croi-backend
+
+  # Next.js frontend
+  croi-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      # Next.js inlines NEXT_PUBLIC_* at build time — this must be a build arg, not
+      # just the `environment:` block below (that only affects the running container,
+      # which is too late; the browser bundle is already frozen by then). Points at
+      # localhost:8080 because this URL is read by the browser, not container-to-container.
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8080/api/v1
+    container_name: croi-frontend
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8080/api/v1
+    ports:
+      - "3000:3000"
+    depends_on:
+      croi-backend:
+        condition: service_healthy
+    networks:
+      - croi-network
+
+volumes:
+  postgres_data:
+    driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  croi-network:
+    driver: bridge

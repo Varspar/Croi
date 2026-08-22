@@ -1,0 +1,31 @@
+# Maven
+target/
+*.jar
+*.war
+pom.xml.tag
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/build/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+.DS_Store
+
+# Environment
+.env
+.env.local
+
+# Logs
+logs/
+*.log
+
+# Temp
+/tmp/
+*.wav
+*.mp3

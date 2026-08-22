@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs wc -l)",
+      "Read(//c/Program Files/Java//**)",
+      "Read(//c/Program Files/**)",
+      "Bash(where.exe java *)",
+      "Bash(JAVA_HOME=\"C:\\\\Program Files\\\\Java\\\\jdk-21.0.12\" mvn -o compile)",
+      "Bash(cd \"c:/Users/CLIFTON VAZ/CroiAI/frontend\" && rm -rf .next && echo \"Removed .next build cache\")",
+      "Bash(npx next *)",
+      "Bash(find ~/.m2/repository/org/springframework/ai -maxdepth 2 -type d 2>/dev/null | sort)",
+      "Read(//c/Users/CLIFTON VAZ/.m2/repository/org/springframework/ai/**)",
+      "Read(//tmp/**)",
+      "Bash(javap -p 'org/springframework/ai/chat/client/ChatClient$ChatClientRequest$CallResponseSpec.class')",
+      "Bash(javap -p 'org/springframework/ai/chat/client/ChatClient$UserSpec.class')",
+      "Bash(javap -p 'org/springframework/ai/chat/client/ChatClient$SystemSpec.class')",
+      "Bash(javap -p 'org/springframework/ai/chat/client/ChatClient.class')",
+      "Bash(unzip -o -q \"/c/Users/CLIFTON VAZ/.m2/repository/org/springframework/ai/spring-ai-core/1.0.0-M1/spring-ai-core-1.0.0-M1.jar\" \"org/springframework/ai/chat/client/*.class\")",
+      "Bash(javap -p 'org/springframework/ai/chat/client/ChatClient$ChatClientRequest.class')",
+      "Bash(javap -p -c 'org/springframework/ai/autoconfigure/chat/client/ChatClientAutoConfiguration.class')",
+      "Bash(rm -rf /tmp/aiextract2)",
+      "Bash(mkdir -p /tmp/aiextract2)",
+      "Bash(unzip -o -q \"/c/Users/CLIFTON VAZ/.m2/repository/org/springframework/ai/spring-ai-spring-boot-autoconfigure/1.0.0-M1/spring-ai-spring-boot-autoconfigure-1.0.0-M1.jar\" \"org/springframework/ai/autoconfigure/vectorstore/pgvector/*.class\")",
+      "Bash(javap -p -c 'org/springframework/ai/autoconfigure/vectorstore/pgvector/PgVectorStoreAutoConfiguration.class')",
+      "Bash(javap -v 'org/springframework/ai/autoconfigure/vectorstore/pgvector/PgVectorStoreAutoConfiguration.class')",
+      "Bash(JAVA_HOME=\"C:\\\\Program Files\\\\Java\\\\jdk-21.0.12\" mvn -q dependency:get -Dartifact=io.github.bucket4j:bucket4j-core:8.10.1 -DremoteRepositories=central::default::https://repo.maven.apache.org/maven2)",
+      "Bash(curl -sS -o /dev/null -w \"HTTP %{http_code}\\\\n\" --max-time 8 https://repo.maven.apache.org/maven2/io/github/bucket4j/bucket4j-core/8.10.1/bucket4j-core-8.10.1.pom)",
+      "Bash(curl -sS -o /dev/null -w \"HTTP %{http_code}\\\\n\" --max-time 8 https://repo1.maven.org/maven2/)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\CLIFTON VAZ\\CroiAI\\frontend\\.next"
+    ]
+  }
+}

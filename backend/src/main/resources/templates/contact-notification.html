@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .header { background: #00E6B5; color: #0F1720; padding: 20px; }
+    .content { padding: 20px; background: #f5f5f5; }
+    .field { margin: 10px 0; }
+    .label { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>New Contact Form Submission</h1>
+    </div>
+    <div class="content">
+      <div class="field">
+        <span class="label">Name:</span> {firstName} {lastName}
+      </div>
+      <div class="field">
+        <span class="label">Company:</span> {companyName}
+      </div>
+      <div class="field">
+        <span class="label">Email:</span> {email}
+      </div>
+      <div class="field">
+        <span class="label">Phone:</span> {phone}
+      </div>
+      <div class="field">
+        <span class="label">Message:</span>
+        <p>{message}</p>
+      </div>
+      {adminPanelSection}
+    </div>
+  </div>
+</body>
+</html>

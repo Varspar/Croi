@@ -1,0 +1,19 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+
+  ollama-init:
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["until ollama -h -a ollama:11434 list >/dev/null 2>&1; do sleep 2; done; ollama -h -a ollama:11434 pull nomic-embed-text"]
+    restart: "no"
+
+volumes:
+  ollama-data:

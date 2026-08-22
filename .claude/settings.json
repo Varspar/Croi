@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sS --max-time 20 -o bucket4j-core-7.6.1.jar \"https://repo.maven.apache.org/maven2/com/bucket4j/bucket4j-core/7.6.1/bucket4j-core-7.6.1.jar\")",
+      "Bash(unzip -l bucket4j-core-7.6.1.jar)",
+      "Bash(grep -E \"^\\\\s*[0-9]+\\\\s.*\\(Bucket4j\\\\.class|Bucket\\\\.class|Bandwidth\\\\.class|Refill\\\\.class\\)$\")",
+      "Bash(unzip -o -q ../bucket4j-core-7.6.1.jar \"io/github/bucket4j/local/LocalBucketBuilder.class\")",
+      "Bash(javap -p io/github/bucket4j/local/LocalBucketBuilder.class)",
+      "Bash(JAVA_HOME=\"C:\\\\Program Files\\\\Java\\\\jdk-21.0.12\" mvn compile)",
+      "Bash(curl -sS --max-time 15 \"https://openrouter.ai/api/v1/models\")",
+      "Bash(curl -sS --max-time 15 -o /dev/null -w \"HTTP %{http_code}\\\\n\" \"https://openrouter.ai/api/v1/embeddings\")",
+      "Bash(curl -sS --max-time 15 \"https://repo.maven.apache.org/maven2/org/apache/pdfbox/pdfbox/maven-metadata.xml\")",
+      "Bash(mvn -q -o compile)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(npm run *)",
+      "Bash(cd \"/c/Users/CLIFTON VAZ/CroiAI\" && rm backend/src/main/java/com/croi/knowledge/controller/DocumentController.java && echo \"deleted\")",
+      "Bash(mvn -q -o clean compile)",
+      "Bash(echo \"BACKEND_EXIT:$?\")"
+    ]
+  }
+}

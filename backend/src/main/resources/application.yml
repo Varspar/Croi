@@ -1,0 +1,110 @@
+spring:
+  application:
+    name: croi
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/croi}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+  # No default host/credentials on purpose. If unset, the contact form still saves
+  # to the database — email notification is best-effort and failures are caught
+  # and logged, never blocking the actual submission. If using Gmail, note that
+  # it requires an App Password (via 2FA), not your regular account password.
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # spring-ai-pgvector-store-spring-boot-starter is still on the classpath (for the
+  # `vector` column JDBC type used by DocumentEmbedding), but its VectorStore bean
+  # has a hard-required EmbeddingModel dependency. Now that OpenAI (the only
+  # EmbeddingModel source) is gone and nothing in the app builds embeddings yet,
+  # leaving this autoconfiguration enabled would fail application startup entirely.
+  # Re-enable once a real embedding pipeline + EmbeddingModel bean exist.
+  autoconfigure:
+    exclude:
+      - org.springframework.ai.autoconfigure.vectorstore.pgvector.PgVectorStoreAutoConfiguration
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# No default value on purpose — leaked keys have previously been committed here as
+# literal defaults. Set the real key via the OPENROUTER_API_KEY environment variable
+# (e.g. in a local, gitignored .env) instead of editing this file.
+# Note: OpenRouter model ids are provider-prefixed (e.g. "anthropic/claude-3-haiku"),
+# not bare model names — a bare name returns a "model not found" error.
+openrouter:
+  api-key: ${OPENROUTER_API_KEY:}
+  model: ${OPENROUTER_MODEL:anthropic/claude-3-haiku}
+  api-url: https://openrouter.ai/api/v1/chat/completions
+
+# Self-hosted embedding service. docker-compose.dev.yml starts this service and
+# downloads nomic-embed-text once into the persistent ollama-data volume.
+ollama:
+  api-url: ${OLLAMA_API_URL:http://localhost:11434/api/embeddings}
+  embedding-model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
+
+rag:
+  chunk-size: ${RAG_CHUNK_SIZE:1000}
+  chunk-overlap: ${RAG_CHUNK_OVERLAP:200}
+
+# Recipient for contact-form admin notifications. Left blank on purpose — no
+# real address was provided. If blank, ContactService skips sending (submission
+# is still saved) rather than emailing a made-up address. admin-panel-url is
+# also blank on purpose — there's no admin panel in this app yet, so the "View
+# in Admin Panel" link is omitted from the email entirely rather than pointing
+# at a page that doesn't exist.
+contact:
+  admin-email: ${CONTACT_ADMIN_EMAIL:}
+  from-email: ${CONTACT_FROM_EMAIL:}
+  admin-panel-url: ${CONTACT_ADMIN_PANEL_URL:}
+
+# No default secret on purpose. Get a site key + secret key at
+# https://www.google.com/recaptcha/admin (register as reCAPTCHA v3). If the
+# secret key is unset, RecaptchaService fails CLOSED (rejects all contact form
+# submissions) rather than silently disabling spam protection — expect every
+# submission to fail verification until this is actually configured.
+recaptcha:
+  secret-key: ${RECAPTCHA_SECRET_KEY:}
+  verify-url: https://www.google.com/recaptcha/api/siteverify
+
+jwt:
+  secret: ${JWT_SECRET:change-this-super-secret-key-min-32-characters-long}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+logging:
+  level:
+    root: INFO
+    com.croi: INFO

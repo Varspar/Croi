@@ -1,0 +1,6 @@
+ALTER TABLE documents
+    ADD COLUMN file_size BIGINT NOT NULL DEFAULT 0,
+    ADD COLUMN file_data BYTEA,
+    ADD COLUMN error_message TEXT,
+    ADD COLUMN chunk_count INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN embedding_count INTEGER NOT NULL DEFAULT 0;
