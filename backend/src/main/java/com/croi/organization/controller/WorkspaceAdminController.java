@@ -1,13 +1,10 @@
 package com.croi.organization.controller;
 
-import com.croi.analytics.dto.WorkspaceAnalyticsDto;
-import com.croi.analytics.service.AnalyticsService;
 import com.croi.common.dto.ApiResponse;
 import com.croi.common.exception.ErrorCode;
 import com.croi.common.exception.UnauthorizedException;
 import com.croi.knowledge.dto.DocumentDto;
 import com.croi.knowledge.service.DocumentService;
-import com.croi.organization.dto.WorkspaceConfigurationDto;
 import com.croi.organization.entity.OrganizationMember;
 import com.croi.organization.repository.OrganizationMemberRepository;
 import com.croi.organization.service.OrganizationService;
@@ -27,7 +24,6 @@ import java.util.UUID;
 public class WorkspaceAdminController {
     private final DocumentService documentService;
     private final OrganizationService organizationService;
-    private final AnalyticsService analyticsService;
     private final OrganizationMemberRepository membershipRepository;
 
     @PostMapping("/documents")
@@ -69,27 +65,6 @@ public class WorkspaceAdminController {
         requireOwner(workspaceId, principal.getId());
         return ResponseEntity.ok(ApiResponse.ok(documentService.getDocumentsByOrganization(workspaceId).stream()
                 .map(document -> documentService.regenerateEmbeddings(document.getId())).toList()));
-    }
-
-    @GetMapping("/configuration")
-    public ResponseEntity<ApiResponse<WorkspaceConfigurationDto>> configuration(@PathVariable UUID workspaceId,
-            @AuthenticationPrincipal UserPrincipal principal) {
-        requireOwner(workspaceId, principal.getId());
-        return ResponseEntity.ok(ApiResponse.ok(organizationService.getConfiguration(workspaceId)));
-    }
-
-    @PutMapping("/configuration")
-    public ResponseEntity<ApiResponse<WorkspaceConfigurationDto>> updateConfiguration(@PathVariable UUID workspaceId,
-            @RequestBody WorkspaceConfigurationDto request, @AuthenticationPrincipal UserPrincipal principal) {
-        requireOwner(workspaceId, principal.getId());
-        return ResponseEntity.ok(ApiResponse.ok(organizationService.updateConfiguration(workspaceId, request)));
-    }
-
-    @GetMapping("/analytics")
-    public ResponseEntity<ApiResponse<WorkspaceAnalyticsDto>> analytics(@PathVariable UUID workspaceId,
-            @AuthenticationPrincipal UserPrincipal principal) {
-        requireOwner(workspaceId, principal.getId());
-        return ResponseEntity.ok(ApiResponse.ok(analyticsService.getWorkspaceAnalytics(workspaceId)));
     }
 
     private void requireMember(UUID workspaceId, UUID userId) {

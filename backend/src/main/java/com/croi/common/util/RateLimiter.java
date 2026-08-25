@@ -34,4 +34,19 @@ public class RateLimiter {
         });
         return bucket.tryConsume(1);
     }
+
+    /**
+     * Same in-memory bucket cache, generalized to an arbitrary key and rate — e.g. per-workspace
+     * limits on a webhook. Callers must namespace their keys (e.g. "voice:{workspaceId}") so they
+     * can't collide with plain client-IP keys used by {@link #allowRequest(String)}.
+     */
+    public boolean allowRequest(String key, int capacity, Duration period) {
+        Bucket bucket = cache.computeIfAbsent(key, k -> {
+            Bandwidth limit = Bandwidth.classic(capacity, Refill.intervally(capacity, period));
+            return Bucket.builder()
+                    .addLimit(limit)
+                    .build();
+        });
+        return bucket.tryConsume(1);
+    }
 }

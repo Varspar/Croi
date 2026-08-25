@@ -34,6 +34,9 @@ public class CallRecording {
     @Column(name = "appointment_id")
     private UUID appointmentId;
 
+    @Column(name = "agent_id")
+    private UUID agentId;
+
     @Column(name = "patient_phone", nullable = false)
     private String patientPhone;
 
@@ -58,6 +61,12 @@ public class CallRecording {
 
     @Column(name = "storage_size_bytes")
     private Long storageSizeBytes;
+
+    /** One of {@link CallOutcome}'s names, or null if the call hasn't ended / outcome wasn't set. */
+    private String outcome;
+
+    @Column(name = "outcome_notes", columnDefinition = "TEXT")
+    private String outcomeNotes;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

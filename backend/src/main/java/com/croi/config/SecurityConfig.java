@@ -32,8 +32,11 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/actuator/health",
-            "/api/v1/workspaces/*/branding",
-            "/api/v1/public/**"
+            // Called by Asterisk (or curl, for manual testing) with no user session — there's
+            // no JWT to check. Authenticated instead by VoiceCallController via a shared-secret
+            // X-Api-Key header (see voice.webhook-api-key). Keep this to exactly these two paths.
+            "/api/v1/voice/call-start",
+            "/api/v1/voice/call-end"
     };
 
     @Bean

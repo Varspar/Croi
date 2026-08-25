@@ -28,7 +28,7 @@ export default function LoginPage() {
       const { token, user } = response.data.data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
-      router.push('/dashboard/chat');
+      router.push('/dashboard/agents');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed');
     } finally {

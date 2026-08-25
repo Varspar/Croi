@@ -10,8 +10,6 @@ import com.croi.organization.dto.CreateOrganizationRequest;
 import com.croi.organization.dto.OrganizationDto;
 import com.croi.organization.dto.OrganizationMemberDto;
 import com.croi.organization.dto.UpdateOrganizationRequest;
-import com.croi.organization.dto.WorkspaceBrandingDto;
-import com.croi.organization.dto.WorkspaceConfigurationDto;
 import com.croi.organization.entity.Organization;
 import com.croi.organization.entity.OrganizationMember;
 import com.croi.organization.repository.OrganizationMemberRepository;
@@ -91,34 +89,6 @@ public class OrganizationService {
     }
 
     @Transactional(readOnly = true)
-    public WorkspaceConfigurationDto getConfiguration(UUID organizationId) {
-        return toConfiguration(findOrganizationOrThrow(organizationId));
-    }
-
-    public WorkspaceConfigurationDto updateConfiguration(UUID organizationId, WorkspaceConfigurationDto request) {
-        Organization organization = findOrganizationOrThrow(organizationId);
-        organization.setSystemPrompt(request.getSystemPrompt());
-        organization.setTone(request.getTone());
-        organization.setEmbeddingModel(request.getEmbeddingModel());
-        organization.setSimilarityThreshold(request.getSimilarityThreshold());
-        organization.setMaxChunksInPrompt(request.getMaxChunksInPrompt());
-        organization.setTemperature(request.getTemperature());
-        organization.setMaxTokens(request.getMaxTokens());
-        return toConfiguration(organizationRepository.save(organization));
-    }
-
-    @Transactional(readOnly = true)
-    public WorkspaceBrandingDto getBranding(UUID organizationId) {
-        Organization organization = findOrganizationOrThrow(organizationId);
-        return WorkspaceBrandingDto.builder()
-                .name(organization.getName())
-                .logo(organization.getLogo())
-                .primaryColor(organization.getPrimaryColor())
-                .description(organization.getDescription())
-                .build();
-    }
-
-    @Transactional(readOnly = true)
     public List<OrganizationMemberDto> getMembers(UUID organizationId) {
         findOrganizationOrThrow(organizationId);
         return organizationMemberRepository.findByOrganizationId(organizationId).stream()
@@ -161,10 +131,4 @@ public class OrganizationService {
                 .build();
     }
 
-    private WorkspaceConfigurationDto toConfiguration(Organization organization) {
-        return WorkspaceConfigurationDto.builder().systemPrompt(organization.getSystemPrompt()).tone(organization.getTone())
-                .embeddingModel(organization.getEmbeddingModel()).similarityThreshold(organization.getSimilarityThreshold())
-                .maxChunksInPrompt(organization.getMaxChunksInPrompt()).temperature(organization.getTemperature())
-                .maxTokens(organization.getMaxTokens()).build();
-    }
 }

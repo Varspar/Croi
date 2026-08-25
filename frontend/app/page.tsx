@@ -7,7 +7,6 @@ import Navigation from '@/components/landing/Navigation';
 import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import AboutSection from '@/components/landing/AboutSection';
-import DemoSection from '@/components/landing/DemoSection';
 import PricingSection from '@/components/landing/PricingSection';
 import ContactSection from '@/components/landing/ContactSection';
 import Footer from '@/components/landing/Footer';
@@ -19,7 +18,7 @@ export default function Home() {
   // everyone else sees the landing page normally (no forced redirect to login).
   useEffect(() => {
     if (localStorage.getItem('token')) {
-      router.push('/dashboard/chat');
+      router.push('/dashboard/agents');
     }
   }, [router]);
 
@@ -30,7 +29,6 @@ export default function Home() {
         <HeroSection />
         <FeaturesSection />
         <AboutSection />
-        <DemoSection />
         <PricingSection />
         <GoogleReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ''}>
           <ContactSection />

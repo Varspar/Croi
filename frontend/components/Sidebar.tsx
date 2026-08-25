@@ -6,12 +6,11 @@ import { useEffect, useState } from 'react';
 import {
   BarChart3,
   BookOpen,
-  CheckSquare,
   ChevronLeft,
   ChevronRight,
   Home,
   Menu,
-  MessageSquare,
+  Phone,
   Plug,
   Settings,
   ShieldCheck,
@@ -26,9 +25,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/dashboard/chat', icon: Home },
-  { label: 'Chat', href: '/dashboard/chat', icon: MessageSquare },
-  { label: 'Tasks', href: '/dashboard/tasks', icon: CheckSquare },
+  { label: 'Agents', href: '/dashboard/agents', icon: Phone },
   { label: 'Knowledge', href: '/dashboard/knowledge', icon: BookOpen },
   { label: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   { label: 'Integrations', href: '/dashboard/integrations', icon: Plug },

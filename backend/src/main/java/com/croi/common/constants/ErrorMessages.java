@@ -8,10 +8,10 @@ public final class ErrorMessages {
     public static final String USER_NOT_FOUND = "User not found";
     public static final String ORGANIZATION_NOT_FOUND = "Organization not found";
     public static final String ORGANIZATION_MEMBER_NOT_FOUND = "Organization member not found";
-    public static final String CONVERSATION_NOT_FOUND = "Conversation not found";
-    public static final String MESSAGE_NOT_FOUND = "Message not found";
     public static final String DOCUMENT_NOT_FOUND = "Document not found";
     public static final String APPOINTMENT_NOT_FOUND = "Appointment not found";
+    public static final String VOICE_AGENT_NOT_FOUND = "Voice agent not found";
+    public static final String CALL_RECORDING_NOT_FOUND = "Call recording not found";
 
     public static final String APPOINTMENT_SLOT_UNAVAILABLE = "That time is no longer available";
 
