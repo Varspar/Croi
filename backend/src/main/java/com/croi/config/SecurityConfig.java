@@ -5,6 +5,7 @@ import com.croi.security.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -46,6 +47,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // CORS preflight (OPTIONS) never carries the Authorization header — a
+                        // browser sends it before the real cross-origin request specifically to
+                        // ask permission, with no credentials attached. Without this, every
+                        // preflight hits `.anyRequest().authenticated()`, gets rejected (403, since
+                        // no AuthenticationEntryPoint is configured), and the browser reports the
+                        // real request as failed even though the token was attached correctly.
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider)
