@@ -2,15 +2,19 @@ package com.croi.security;
 
 import com.croi.config.JwtConfig;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwtProvider {
 
@@ -20,6 +24,10 @@ public class JwtProvider {
     public JwtProvider(JwtConfig jwtConfig) {
         this.signingKey = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes(StandardCharsets.UTF_8));
         this.expirationMs = jwtConfig.getExpirationMs();
+        // Never logs the secret itself — just enough to eyeball "is every process using the
+        // same secret" across restarts/containers without exposing the key value.
+        log.info("JwtProvider initialized: secret length={}, expirationMs={}",
+                jwtConfig.getSecret() == null ? 0 : jwtConfig.getSecret().length(), expirationMs);
     }
 
     public String generateToken(String subjectEmail) {
@@ -42,7 +50,15 @@ public class JwtProvider {
         try {
             parseClaims(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            log.warn("JWT rejected: expired at {}", e.getClaims().getExpiration());
+            return false;
+        } catch (SignatureException e) {
+            log.warn("JWT rejected: signature does not match this server's jwt.secret "
+                    + "(token was likely issued by a different process/secret) — {}", e.getMessage());
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
+            log.warn("JWT rejected: {} — {}", e.getClass().getSimpleName(), e.getMessage());
             return false;
         }
     }
